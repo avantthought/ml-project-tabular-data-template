@@ -168,8 +168,8 @@ def create_hyperopt_scores_df(hyperopt_trials_list, model_name):
     """
     Returns a dataframe of hyperopt scores. Each row is one trial and consists of the model hyperparameters
         used; results of every cv score for every fold (in addition to the mean and std of the folds), and the
-        runtime of trial. The rows of the dataframe are sorted by best loss (i.e. best set of params). Function is
-        heavily tightly coupled with the structure of the Hyperoptimizer class and the structure of the output
+        runtime of trial. The rows of the dataframe are sorted by best loss (i.e. best set of params).
+    Function is heavily tightly coupled with the structure of the Hyperoptimizer class and the structure of the output
         of the trials property.
 
     :param List[dict] hyperopt_trials_list: output of the trials property (after running search() on an instance

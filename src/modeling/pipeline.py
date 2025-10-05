@@ -1,5 +1,9 @@
-"""Place modeling pipeline function(s)."""
+"""Place modeling pipeline function(s) here."""
 
+from copy import deepcopy
+
+import numpy as np
+import pandas as pd
 from sklearn.compose import ColumnTransformer, make_column_selector as selector
 from sklearn.feature_extraction import DictVectorizer
 from sklearn.pipeline import Pipeline
@@ -34,3 +38,22 @@ def create_pipeline(model, fields_to_drop):
         ('model', model)
     ])
     return pipeline
+
+
+#NOTE: the structure of this function is tightly coupled with the structure of the create_pipeline() function above.
+def pipeline_preprocessor_model_splitter(x, pipeline):
+    """"
+    Breaks off the fitted model at the end of given fitted pipeline and returns it along with the preprocessor part of
+        the given dataframe x. Function is (unfortunately but necessarily) tightly coupled with the structure of the
+        given model pipeline.
+    This function is necessary when using DictVectorizer with categorical features with feature importance tools such
+        as SHAP (each individual dummmy variable from one column is treated separately in SHAP).
+    """
+    pipeline_copy = deepcopy(pipeline)
+    fitted_model = pipeline_copy.steps.pop(len(pipeline_copy) - 1)[1]
+    num_cols = pipeline_copy.named_steps['column_dropper'].transformer(x).select_dtypes(
+        include=[np.number]).columns.tolist()
+    cat_cols = pipeline_copy.named_steps['preprocessor'].named_transformers_.get(
+        'categorical_transformer').named_steps['dict_vectorizer'].feature_names_
+    x_preprocessed = pd.DataFrame(pipeline_copy.transform(x), columns=num_cols + cat_cols)
+    return x_preprocessed, fitted_model
