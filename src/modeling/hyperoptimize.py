@@ -201,7 +201,7 @@ def create_hyperopt_scores_df(hyperopt_trials_list, model_name):
             row = pd.concat([row, cv_score_row], axis=1)
         hyperopt_scores_df = pd.concat([hyperopt_scores_df, row], axis=0)
     hyperopt_scores_df = hyperopt_scores_df.sort_values(by='loss', ascending=True)
-    #TODO: maybe add ranking column or rename the index as ranking?
+    #TODO: consider add ranking column or rename the index as ranking.
     hyperopt_scores_df = hyperopt_scores_df.reset_index(drop=True)
     hyperopt_scores_df = hyperopt_scores_df.drop(columns=['loss'])
     return hyperopt_scores_df
